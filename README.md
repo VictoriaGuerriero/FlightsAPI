@@ -18,7 +18,7 @@ Una API REST construida con **FastAPI** y **MongoDB** para gestionar vuelos y pa
 1. Clona el repositorio:
 
 ```bash
-git clone <url-del-repo>
+git clone https://github.com/VictoriaGuerriero/FlightsAPI.git
 cd FlightsAPI
 ```
 
