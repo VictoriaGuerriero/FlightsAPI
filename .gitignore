@@ -1,0 +1,44 @@
+# Bytecode de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Entornos virtuales
+.env/
+.venv/
+venv/
+ENV/
+
+# Archivos de configuración locales
+*.env
+*.local
+.env.*
+
+# Logs
+*.log
+
+# Archivos de bases de datos temporales
+*.db
+
+# Archivos de VS Code
+.vscode/
+
+# Archivos de Jupyter o IPython
+.ipynb_checkpoints
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# Archivos generados por pip
+pip-wheel-metadata/
+*.egg-info/
+
+# MacOS y Linux
+.DS_Store
+Thumbs.db
+
+# Archivos de compilación
+build/
+dist/
+*.egg
