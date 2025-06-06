@@ -40,6 +40,49 @@ async def create_flight_db(flight: Flight):
                 "hasCheckedBaggage": passenger.hasCheckedBaggage
             } for passenger in flight.passengers
         ]
+
+        if len(flight_data["passengers"]) > flight.capacity:
+            passengers_stay_on_flight = []
+            passengers_dont_stay = []
+            reservation_code_dic = {}
+            passenger_id_and_score = []
+            for passenger in flight_data["passengers"]:
+                passenger_priority_score = 0
+                if passenger["reservationId"] not in reservation_code_dic.keys():
+                    reservation_code_dic[passenger["reservationId"]] = 1
+                else:
+                    reservation_code_dic[passenger["reservationId"]] += 1
+
+                #Revisar categoría
+                if passenger["flightCategory"] == 'Black':
+                    passenger_priority_score += 8
+                elif passenger["flightCategory"] == 'Platinum':
+                    passenger_priority_score += 7
+                elif passenger["flightCategory"] == 'Gold':
+                    passenger_priority_score += 6
+                elif passenger_priority_score["flightCategory"] == 'Normal':
+                    passenger_priority_score += 5
+                
+                #Revisar vuelo de conexion
+                if passenger["hasConnections"]:
+                    passenger_priority_score += 4
+                
+                #revisar si tiene bolso
+                if passenger["hasCheckedBaggage"]:
+                    passenger_priority_score += 2
+
+                #revisar edad
+                if passenger["age"] >= 60 or passenger["age"] <= 15:
+                    passenger_priority_score +=1
+                
+                passenger_id_and_score.append((passenger['id'], passenger_priority_score))
+            
+            sorted_passenger_and_score = sorted(passenger_id_and_score, key=lambda item: item[1], reverse=True)
+
+            for i in range(flight_data['capacity']):
+                passengers_stay_on_flight.append(sorted_passenger_and_score[i])
+            
+
     else:
         flight_data["passengers"] = []
 
@@ -49,6 +92,7 @@ async def create_flight_db(flight: Flight):
         return {"message": "Flight created", "flightCode": flight.flightCode}
     else:
         raise Exception("Failed to create flight")
+    
 
 async def update_flight_code_db(old_code: str, new_code: str):
     flight = await collection.find_one({"flightCode": old_code})
@@ -114,7 +158,7 @@ async def add_passenger_db(flight_code: str, passenger: Passenger):
     return {"message": "Passenger added", "passengerId": new_passenger_id}
 
 async def update_passenger_db(flight_code: str, reservation_id: str, passenger_update: PassengerUpdate):
-    updated_data = passenger_update.model_dump(exclude_unset=True)
+    updated_data = passenger_update.model_dump(exclude_unset=True) #solía ser .dict para pasarlo a diccionario
     if not updated_data:
         raise Exception("No fields to update")
 

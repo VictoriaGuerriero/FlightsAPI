@@ -20,6 +20,7 @@ class Passenger(BaseModel):
 
 class Flight(BaseModel):
     flightCode: str
+    capacity: int
     passengers: List[Passenger]
 
 class FlightCodeUpdate(BaseModel):
